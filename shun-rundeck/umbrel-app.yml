@@ -4,7 +4,7 @@ name: Rundeck
 tagline: ジョブスケジューリングとRunbook自動化プラットフォーム
 icon: https://raw.githubusercontent.com/rundeck/rundeck/main/rundeckapp/src/main/webapp/images/rundeck-icon-256.png
 category: automation
-version: "5.8.0"
+version: "5.20.0"
 port: 4440
 description: >-
   RundeckはオープンソースのジョブスケジューリングおよびRunbook自動化プラットフォームです。
