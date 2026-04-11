@@ -1,0 +1,39 @@
+manifestVersion: 1
+id: shun-rundeck
+name: Rundeck
+tagline: ジョブスケジューリングとRunbook自動化プラットフォーム
+icon: https://raw.githubusercontent.com/rundeck/rundeck/main/rundeckapp/src/main/webapp/images/rundeck-icon-256.png
+category: automation
+version: "5.8.0"
+port: 4440
+description: >-
+  RundeckはオープンソースのジョブスケジューリングおよびRunbook自動化プラットフォームです。
+
+  Webコンソール、コマンドラインツール、WebAPIを通じてリモートノードへのコマンド実行、ワークフローの作成・スケジューリング、アクセス制御付きのジョブ管理が可能です。
+
+  【主な機能】
+  - Webブラウザからジョブを定義・実行・スケジュール管理
+  - 複数ノードへの一括コマンド実行
+  - ジョブの実行履歴・ログの確認
+  - アクセス制御（ACL）によるロールベースの権限管理
+  - REST APIによる外部システム連携
+
+  【注意】
+  - デフォルトのユーザー名: admin
+  - デフォルトのパスワード: admin
+  - 初回起動には1〜2分ほどかかります
+  - 推奨メモリ: 2GB以上
+
+developer: PagerDuty (Rundeck)
+website: https://www.rundeck.com
+submitter: shunnishi84
+submission: https://github.com/shunnishi84/umbrel-community-app-store
+repo: https://github.com/rundeck/rundeck
+support: https://github.com/rundeck/rundeck/issues
+gallery: []
+releaseNotes: >-
+  Rundeckの初回リリース。
+dependencies: []
+path: ""
+defaultUsername: "admin"
+defaultPassword: "admin"
