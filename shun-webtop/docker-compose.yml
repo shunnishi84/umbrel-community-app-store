@@ -17,5 +17,6 @@ services:
       - USER_NAME=${USER_NAME:-user}
     volumes:
       - ./data:/config
+      - ./init:/config/custom-cont-init.d
     shm_size: "2gb"
     restart: on-failure
