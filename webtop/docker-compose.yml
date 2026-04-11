@@ -6,9 +6,9 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Tokyo
-      - LC_ALL=ja_JP.UTF-8
-      - USER_NAME=shun
+      - TZ=${TZ:-UTC}
+      - LC_ALL=${LC_ALL:-C.UTF-8}
+      - USER_NAME=${USER_NAME:-user}
     volumes:
       - ./data:/config
     shm_size: "2gb"
