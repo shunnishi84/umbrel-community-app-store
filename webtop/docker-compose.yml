@@ -11,8 +11,10 @@ services:
       - USER_NAME=shun
     volumes:
       - ./data:/config
-    ports:
-      - 3000:3000
-      - 3001:3001
     shm_size: "2gb"
     restart: always
+
+  app_proxy:
+    environment:
+      - APP_HOST=webtop
+      - APP_PORT=3000
