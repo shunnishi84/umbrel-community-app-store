@@ -1,8 +1,14 @@
+version: "3.7"
+
 services:
+
+  app_proxy:
+    environment:
+      APP_HOST: shun-webtop_webtop_1
+      APP_PORT: 3000
+
   webtop:
     image: lscr.io/linuxserver/webtop:ubuntu-mate
-    container_name: webtop
-    hostname: webtop
     environment:
       - PUID=1000
       - PGID=1000
@@ -12,9 +18,4 @@ services:
     volumes:
       - ./data:/config
     shm_size: "2gb"
-    restart: always
-
-  app_proxy:
-    environment:
-      - APP_HOST=webtop
-      - APP_PORT=3000
+    restart: on-failure
