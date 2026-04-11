@@ -1,0 +1,20 @@
+services:
+  webtop:
+    image: lscr.io/linuxserver/webtop:ubuntu-mate
+    container_name: webtop
+    hostname: webtop
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-UTC}
+      - LC_ALL=${LC_ALL:-C.UTF-8}
+      - USER_NAME=${USER_NAME:-user}
+    volumes:
+      - ./data:/config
+    shm_size: "2gb"
+    restart: always
+
+  app_proxy:
+    environment:
+      - APP_HOST=webtop
+      - APP_PORT=3000
