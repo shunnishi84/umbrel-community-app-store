@@ -12,7 +12,7 @@ services:
     mem_limit: 4g
     environment:
       - RUNDECK_SERVER_ADDRESS=0.0.0.0
-      - RUNDECK_GRAILS_URL=http://localhost:4440
+      - RUNDECK_GRAILS_URL=http://umbrel.local:4440
       - RUNDECK_DATABASE_DRIVER=org.h2.Driver
       - RUNDECK_DATABASE_USERNAME=rundeck
       - RUNDECK_DATABASE_PASSWORD=rundeck
