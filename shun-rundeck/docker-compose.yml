@@ -9,6 +9,7 @@ services:
 
   rundeck:
     image: rundeck/rundeck:5.20.0
+    mem_limit: 4g
     environment:
       - RUNDECK_SERVER_ADDRESS=0.0.0.0
       - RUNDECK_GRAILS_URL=http://localhost:4440
@@ -16,6 +17,7 @@ services:
       - RUNDECK_DATABASE_USERNAME=rundeck
       - RUNDECK_DATABASE_PASSWORD=rundeck
       - RUNDECK_DATABASE_URL=jdbc:h2:file:/home/rundeck/server/data/grailsdb
+      - JAVA_OPTS=-Xmx3g -Xms1g
     volumes:
       - ./data:/home/rundeck/server/data
     restart: on-failure
