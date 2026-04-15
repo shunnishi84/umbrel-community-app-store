@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from . import database
 from .routers import results as results_router
+from .routers import settings as settings_router
 from .scheduler import MEASUREMENT_INTERVAL_MINUTES, measurement_job
 
 logging.basicConfig(
@@ -48,6 +49,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="SpeedTest Monitor", lifespan=lifespan)
 app.include_router(results_router.router)
+app.include_router(settings_router.router)
 
 
 @app.get("/health")
