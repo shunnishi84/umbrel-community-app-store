@@ -1,7 +1,6 @@
 services:
   app:
     image: ghcr.io/shunnishi84/shun-speedtest-graph:1.0.0
-    build: .
     restart: unless-stopped
     ports:
       - "${APP_PORT}:8000"
