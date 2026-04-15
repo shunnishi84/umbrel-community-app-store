@@ -17,6 +17,10 @@ CREATE TABLE IF NOT EXISTS speed_results (
     server_name   TEXT,
     error         TEXT
 );
+CREATE TABLE IF NOT EXISTS settings (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL DEFAULT ''
+);
 CREATE INDEX IF NOT EXISTS idx_measured_at ON speed_results(measured_at);
 """
 
@@ -125,6 +129,23 @@ def get_stats(hours: int = 24) -> dict:
             (cutoff,),
         ).fetchone()
         return dict(row) if row else {}
+
+
+def get_setting(key: str, default: str = "") -> str:
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT value FROM settings WHERE key = ?", (key,)
+        ).fetchone()
+        return row["value"] if row else default
+
+
+def set_setting(key: str, value: str) -> None:
+    with get_conn() as conn:
+        conn.execute(
+            "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
+            (key, value),
+        )
+        conn.commit()
 
 
 def purge_old(retention_days: int = RETENTION_DAYS) -> int:

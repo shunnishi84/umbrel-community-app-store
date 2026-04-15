@@ -1,6 +1,10 @@
 const REFRESH_MS = 5 * 60 * 1000;
+const POLL_MS = 2000;
 let currentHours = 6;
 let chart;
+let pollTimer = null;
+
+// ===== Utilities =====
 
 function fmt(n, digits = 1) {
   if (n === null || n === undefined || Number.isNaN(n)) return "-";
@@ -8,16 +12,41 @@ function fmt(n, digits = 1) {
 }
 
 function parseUtc(s) {
-  // SQLite stores "YYYY-MM-DD HH:MM:SS" in UTC; append Z for correct parsing.
   if (!s) return null;
   return new Date(s.replace(" ", "T") + "Z");
 }
 
-async function fetchJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+async function fetchJson(url, options) {
+  const res = await fetch(url, options);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `HTTP ${res.status}`);
+  }
   return res.json();
 }
+
+function getCssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+// ===== Theme =====
+
+function initTheme() {
+  const saved = localStorage.getItem("theme") || "dark";
+  document.documentElement.setAttribute("data-theme", saved);
+  document.getElementById("btn-theme").textContent = saved === "dark" ? "☀️" : "🌙";
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme") || "dark";
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
+  document.getElementById("btn-theme").textContent = next === "dark" ? "☀️" : "🌙";
+  if (chart) loadChart(currentHours);
+}
+
+// ===== Latest values =====
 
 async function loadLatest() {
   try {
@@ -39,13 +68,19 @@ async function loadLatest() {
   }
 }
 
+// ===== Chart =====
+
 async function loadChart(hours) {
   try {
     const data = await fetchJson(`/api/results?hours=${hours}`);
     const rows = data.results || [];
-    const dlPoints = rows.map(r => ({ x: parseUtc(r.measured_at), y: r.download_mbps }));
-    const ulPoints = rows.map(r => ({ x: parseUtc(r.measured_at), y: r.upload_mbps }));
+    const dlPoints   = rows.map(r => ({ x: parseUtc(r.measured_at), y: r.download_mbps }));
+    const ulPoints   = rows.map(r => ({ x: parseUtc(r.measured_at), y: r.upload_mbps }));
     const pingPoints = rows.map(r => ({ x: parseUtc(r.measured_at), y: r.ping_ms }));
+
+    const tickColor   = getCssVar("--chart-tick");
+    const gridColor   = getCssVar("--chart-grid");
+    const legendColor = getCssVar("--chart-legend");
 
     const ctx = document.getElementById("speed-chart").getContext("2d");
     if (chart) chart.destroy();
@@ -87,29 +122,29 @@ async function loadChart(hours) {
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
         plugins: {
-          legend: { labels: { color: "#e6edf7" } },
+          legend: { labels: { color: legendColor } },
           tooltip: { mode: "index", intersect: false },
         },
         scales: {
           x: {
             type: "time",
             time: { tooltipFormat: "yyyy-MM-dd HH:mm" },
-            ticks: { color: "#8a97b4" },
-            grid: { color: "rgba(255,255,255,.05)" },
+            ticks: { color: tickColor },
+            grid: { color: gridColor },
           },
           y: {
             type: "linear",
             position: "left",
-            title: { display: true, text: "Speed (Mbps)", color: "#8a97b4" },
-            ticks: { color: "#8a97b4" },
-            grid: { color: "rgba(255,255,255,.05)" },
+            title: { display: true, text: "Speed (Mbps)", color: tickColor },
+            ticks: { color: tickColor },
+            grid: { color: gridColor },
             beginAtZero: true,
           },
           y1: {
             type: "linear",
             position: "right",
-            title: { display: true, text: "Ping (ms)", color: "#8a97b4" },
-            ticks: { color: "#8a97b4" },
+            title: { display: true, text: "Ping (ms)", color: tickColor },
+            ticks: { color: tickColor },
             grid: { drawOnChartArea: false },
             beginAtZero: true,
           },
@@ -125,6 +160,152 @@ async function refresh() {
   await Promise.all([loadLatest(), loadChart(currentHours)]);
 }
 
+// ===== Manual measurement =====
+
+function setMeasuring(active) {
+  const btn = document.getElementById("btn-measure");
+  const icon = document.getElementById("measure-icon");
+  const label = document.getElementById("measure-label");
+  btn.disabled = active;
+  btn.classList.toggle("measuring", active);
+  icon.textContent = active ? "⏳" : "⚡";
+  label.textContent = active ? "計測中…" : "今すぐ計測";
+}
+
+async function pollMeasureStatus() {
+  try {
+    const st = await fetchJson("/api/measure/status");
+    if (!st.measuring) {
+      clearInterval(pollTimer);
+      pollTimer = null;
+      setMeasuring(false);
+      await refresh();
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function triggerMeasure() {
+  if (pollTimer) return;
+  try {
+    await fetchJson("/api/measure", { method: "POST" });
+    setMeasuring(true);
+    pollTimer = setInterval(pollMeasureStatus, POLL_MS);
+  } catch (e) {
+    if (e.message.includes("409")) {
+      setMeasuring(true);
+      pollTimer = setInterval(pollMeasureStatus, POLL_MS);
+    } else {
+      alert("計測の開始に失敗しました: " + e.message);
+    }
+  }
+}
+
+// ===== Settings =====
+
+async function loadSettings() {
+  try {
+    const s = await fetchJson("/api/settings");
+
+    // Machine name label in header
+    const label = document.getElementById("machine-name-label");
+    if (s.machine_name) {
+      label.textContent = s.machine_name;
+      label.classList.add("visible");
+    } else {
+      label.textContent = "";
+      label.classList.remove("visible");
+    }
+
+    // Pre-fill machine name input
+    document.getElementById("input-machine-name").value = s.machine_name || "";
+
+    // Show X post button only when credentials are configured
+    document.getElementById("btn-post-x").style.display = s.x_configured ? "" : "none";
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function saveSettings() {
+  const machineName = document.getElementById("input-machine-name").value.trim();
+  const xApiKey = document.getElementById("input-x-api-key").value.trim();
+  const xApiSecret = document.getElementById("input-x-api-secret").value.trim();
+  const xAccessToken = document.getElementById("input-x-access-token").value.trim();
+  const xAccessTokenSecret = document.getElementById("input-x-access-token-secret").value.trim();
+
+  const body = { machine_name: machineName };
+  if (xApiKey) body.x_api_key = xApiKey;
+  if (xApiSecret) body.x_api_secret = xApiSecret;
+  if (xAccessToken) body.x_access_token = xAccessToken;
+  if (xAccessTokenSecret) body.x_access_token_secret = xAccessTokenSecret;
+
+  const statusEl = document.getElementById("settings-status");
+  const saveBtn = document.getElementById("btn-settings-save");
+  saveBtn.disabled = true;
+  statusEl.textContent = "保存中…";
+
+  try {
+    await fetchJson("/api/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    statusEl.textContent = "保存しました";
+
+    // Clear password fields after save
+    ["input-x-api-key", "input-x-api-secret", "input-x-access-token", "input-x-access-token-secret"]
+      .forEach(id => { document.getElementById(id).value = ""; });
+
+    await loadSettings();
+    setTimeout(() => { statusEl.textContent = ""; }, 2500);
+  } catch (e) {
+    statusEl.textContent = "エラー: " + e.message;
+  } finally {
+    saveBtn.disabled = false;
+  }
+}
+
+// ===== X post =====
+
+async function postToX() {
+  const btn = document.getElementById("btn-post-x");
+  btn.disabled = true;
+  try {
+    const res = await fetchJson("/api/post-x", { method: "POST" });
+    alert("Xへの投稿が完了しました！\n\n" + res.text);
+  } catch (e) {
+    alert("Xへの投稿に失敗しました: " + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ===== Modal =====
+
+function openModal() {
+  document.getElementById("modal-settings").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("modal-settings").classList.remove("open");
+  document.getElementById("settings-status").textContent = "";
+}
+
+// ===== Event listeners =====
+
+document.getElementById("btn-theme").addEventListener("click", toggleTheme);
+document.getElementById("btn-measure").addEventListener("click", triggerMeasure);
+document.getElementById("btn-post-x").addEventListener("click", postToX);
+document.getElementById("btn-settings").addEventListener("click", openModal);
+document.getElementById("btn-modal-close").addEventListener("click", closeModal);
+document.getElementById("btn-settings-save").addEventListener("click", saveSettings);
+document.querySelector(".modal-backdrop").addEventListener("click", closeModal);
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+
 document.querySelectorAll(".range-tabs button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".range-tabs button").forEach(b => b.classList.remove("active"));
@@ -134,5 +315,9 @@ document.querySelectorAll(".range-tabs button").forEach(btn => {
   });
 });
 
+// ===== Init =====
+
+initTheme();
+loadSettings();
 refresh();
 setInterval(refresh, REFRESH_MS);
