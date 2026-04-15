@@ -1,0 +1,135 @@
+:root {
+  --bg: #0c1221;
+  --bg-card: #172033;
+  --bg-card-hover: #1e2940;
+  --fg: #e6edf7;
+  --fg-dim: #8a97b4;
+  --accent-dl: #3ddc97;
+  --accent-ul: #6aa8ff;
+  --accent-ping: #ffb03a;
+  --border: #253049;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.5;
+}
+
+header {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .5rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.last-updated {
+  color: var(--fg-dim);
+  font-size: .85rem;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.2rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .9rem;
+  margin-bottom: 1.2rem;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+}
+
+.card .label {
+  color: var(--fg-dim);
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.card .value {
+  margin-top: .4rem;
+  font-size: 1.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  gap: .35rem;
+}
+
+.card .unit {
+  font-size: .85rem;
+  font-weight: 400;
+  color: var(--fg-dim);
+}
+
+.card-download .value { color: var(--accent-dl); }
+.card-upload   .value { color: var(--accent-ul); }
+.card-ping     .value { color: var(--accent-ping); }
+
+.range-tabs {
+  display: flex;
+  gap: .4rem;
+  margin-bottom: .8rem;
+  flex-wrap: wrap;
+}
+
+.range-tabs button {
+  background: var(--bg-card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  padding: .5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .9rem;
+  transition: background .15s;
+}
+
+.range-tabs button:hover {
+  background: var(--bg-card-hover);
+}
+
+.range-tabs button.active {
+  background: var(--accent-ul);
+  border-color: var(--accent-ul);
+  color: #071022;
+  font-weight: 600;
+}
+
+.chart-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  height: 60vh;
+  min-height: 340px;
+}
+
+@media (max-width: 640px) {
+  header h1 { font-size: 1.1rem; }
+  .cards { grid-template-columns: 1fr; }
+  .card .value { font-size: 1.6rem; }
+  .chart-wrapper { height: 55vh; padding: .5rem; }
+  main { padding: .8rem; }
+}
