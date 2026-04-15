@@ -4,7 +4,7 @@ name: SpeedTest Monitor
 tagline: 回線速度を自動測定・グラフ表示
 icon: https://raw.githubusercontent.com/shunnishi84/umbrel-community-app-store/main/shun-speedtest-graph/icon.png
 category: networking
-version: "1.0.0"
+version: "1.0.1"
 port: 3842
 description: >-
   15分ごとにインターネット速度を自動測定し、
@@ -21,4 +21,13 @@ support: https://github.com/shunnishi84/umbrel-community-app-store/issues
 gallery: []
 defaultUsername: ""
 defaultPassword: ""
-releaseNotes: "初回リリース"
+releaseNotes: >-
+  **v1.0.1**
+
+  - 手動計測機能: ヘッダーの「今すぐ計測」ボタンから即時に速度計測を実行できます
+
+  - マシン登録機能: 設定画面でマシン名を登録し、ヘッダーおよびX投稿に表示できます
+
+  - X (Twitter) 投稿機能: 最新の計測結果をワンクリックでXに投稿できます（要API設定）
+
+  - ダーク/ライトモード切替: ヘッダーのボタンでテーマを切り替えられます（設定はブラウザに保存）
