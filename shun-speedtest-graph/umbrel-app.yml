@@ -12,8 +12,13 @@ description: >-
   過去31日分のデータを保持し、Chart.jsベースのダークテーマUIで確認できます。
 developer: shunnishi84
 website: https://github.com/shunnishi84/umbrel-community-app-store/tree/main/shun-speedtest-graph
+submitter: ""
+submission: ""
+path: ""
 dependencies: []
 repo: https://github.com/shunnishi84/umbrel-community-app-store
 support: https://github.com/shunnishi84/umbrel-community-app-store/issues
 gallery: []
+defaultUsername: ""
+defaultPassword: ""
 releaseNotes: "初回リリース"
