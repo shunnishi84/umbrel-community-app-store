@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeedTest Monitor</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>🚀 SpeedTest Monitor</h1>
+    <div class="last-updated">最終測定: <span id="last-updated">-</span></div>
+  </header>
+
+  <main>
+    <section class="cards">
+      <div class="card card-download">
+        <div class="label">Download</div>
+        <div class="value"><span id="latest-download">-</span><span class="unit">Mbps</span></div>
+      </div>
+      <div class="card card-upload">
+        <div class="label">Upload</div>
+        <div class="value"><span id="latest-upload">-</span><span class="unit">Mbps</span></div>
+      </div>
+      <div class="card card-ping">
+        <div class="label">Ping</div>
+        <div class="value"><span id="latest-ping">-</span><span class="unit">ms</span></div>
+      </div>
+    </section>
+
+    <section class="range-tabs">
+      <button data-hours="6" class="active">6h</button>
+      <button data-hours="24">24h</button>
+      <button data-hours="168">7d</button>
+      <button data-hours="744">31d</button>
+    </section>
+
+    <section class="chart-wrapper">
+      <canvas id="speed-chart"></canvas>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

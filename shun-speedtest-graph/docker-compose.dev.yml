@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    environment:
+      - DATABASE_PATH=/data/speedtest.db
+      - MEASUREMENT_INTERVAL_MINUTES=15
+      - RETENTION_DAYS=31

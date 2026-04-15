@@ -1,0 +1,19 @@
+manifestVersion: 1
+id: shun-speedtest-graph
+name: SpeedTest Monitor
+tagline: 回線速度を自動測定・グラフ表示
+icon: https://raw.githubusercontent.com/shunnishi84/umbrel-community-app-store/main/shun-speedtest-graph/icon.png
+category: networking
+version: "1.0.0"
+port: 3842
+description: >-
+  15分ごとにインターネット速度を自動測定し、
+  ダウンロード・アップロード・pingをグラフで可視化します。
+  過去31日分のデータを保持し、Chart.jsベースのダークテーマUIで確認できます。
+developer: shunnishi84
+website: https://github.com/shunnishi84/umbrel-community-app-store/tree/main/shun-speedtest-graph
+dependencies: []
+repo: https://github.com/shunnishi84/umbrel-community-app-store
+support: https://github.com/shunnishi84/umbrel-community-app-store/issues
+gallery: []
+releaseNotes: "初回リリース"
