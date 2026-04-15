@@ -1,7 +1,1 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(python -c \"import ast, pathlib; [ast.parse\\(p.read_text\\(\\)\\) for p in pathlib.Path\\('app'\\).rglob\\('*.py'\\)]; print\\('syntax ok'\\)\")"
-    ]
-  }
-}
+{}
