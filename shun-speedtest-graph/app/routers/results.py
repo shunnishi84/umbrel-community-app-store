@@ -1,5 +1,6 @@
 import csv
 import io
+from datetime import date
 from typing import Optional
 
 from fastapi import APIRouter, Query
@@ -13,13 +14,15 @@ router = APIRouter(prefix="/api", tags=["results"])
 @router.get("/results/csv")
 def results_csv(
     hours: Optional[int] = Query(default=24, ge=1, le=24 * 31),
-    from_date: Optional[str] = Query(default=None),
-    to_date: Optional[str] = Query(default=None),
+    from_date: Optional[date] = Query(default=None),
+    to_date: Optional[date] = Query(default=None),
 ):
+    from_date_str = from_date.isoformat() if from_date else None
+    to_date_str = to_date.isoformat() if to_date else None
     results = database.get_results(
         hours=hours,
-        from_date=from_date,
-        to_date=to_date,
+        from_date=from_date_str,
+        to_date=to_date_str,
     )
     output = io.StringIO()
     writer = csv.writer(output)
@@ -34,10 +37,10 @@ def results_csv(
         ])
 
     filename = "speedtest"
-    if from_date:
-        filename += f"_{from_date}"
-    if to_date:
-        filename += f"_to_{to_date}"
+    if from_date_str:
+        filename += f"_{from_date_str}"
+    if to_date_str:
+        filename += f"_to_{to_date_str}"
     filename += ".csv"
 
     return Response(
