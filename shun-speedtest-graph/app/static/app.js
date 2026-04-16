@@ -438,7 +438,7 @@ document.querySelectorAll(".results-table th.sortable").forEach(th => {
       currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
     } else {
       currentSort.col = col;
-      currentSort.dir = col === "measured_at" ? "desc" : "desc";
+      currentSort.dir = "desc";
     }
     updateSortHeaders();
     renderTable(cachedResults);
