@@ -26,30 +26,81 @@
   </header>
 
   <main>
+    <!-- Stat cards with avg/max/min -->
     <section class="cards">
       <div class="card card-download">
         <div class="label">Download</div>
         <div class="value"><span id="latest-download">-</span><span class="unit">Mbps</span></div>
+        <div class="card-stats">
+          <span><span class="stat-lbl">avg</span><b id="avg-download">-</b></span>
+          <span><span class="stat-lbl">max</span><b id="max-download">-</b></span>
+          <span><span class="stat-lbl">min</span><b id="min-download">-</b></span>
+        </div>
       </div>
       <div class="card card-upload">
         <div class="label">Upload</div>
         <div class="value"><span id="latest-upload">-</span><span class="unit">Mbps</span></div>
+        <div class="card-stats">
+          <span><span class="stat-lbl">avg</span><b id="avg-upload">-</b></span>
+          <span><span class="stat-lbl">max</span><b id="max-upload">-</b></span>
+          <span><span class="stat-lbl">min</span><b id="min-upload">-</b></span>
+        </div>
       </div>
       <div class="card card-ping">
         <div class="label">Ping</div>
         <div class="value"><span id="latest-ping">-</span><span class="unit">ms</span></div>
+        <div class="card-stats">
+          <span><span class="stat-lbl">avg</span><b id="avg-ping">-</b></span>
+          <span><span class="stat-lbl">max</span><b id="max-ping">-</b></span>
+          <span><span class="stat-lbl">min</span><b id="min-ping">-</b></span>
+        </div>
       </div>
     </section>
 
-    <section class="range-tabs">
-      <button data-hours="6" class="active">6h</button>
-      <button data-hours="24">24h</button>
-      <button data-hours="168">7d</button>
-      <button data-hours="744">31d</button>
+    <!-- Filter controls -->
+    <section class="controls">
+      <div class="range-tabs" id="range-tabs">
+        <button data-hours="6" class="active">6h</button>
+        <button data-hours="24">24h</button>
+        <button data-hours="168">7d</button>
+        <button data-hours="744">31d</button>
+      </div>
+      <div class="date-filter">
+        <input type="date" id="from-date" title="開始日" />
+        <span class="date-sep">〜</span>
+        <input type="date" id="to-date" title="終了日" />
+        <button class="btn btn-sm" id="btn-apply-date">適用</button>
+        <button class="btn btn-sm" id="btn-clear-date">クリア</button>
+      </div>
+      <button class="btn btn-sm btn-csv" id="btn-csv">⬇ CSV</button>
     </section>
 
+    <!-- Chart -->
     <section class="chart-wrapper">
       <canvas id="speed-chart"></canvas>
+    </section>
+
+    <!-- Results table -->
+    <section class="table-section">
+      <div class="table-header">
+        <h3>計測履歴</h3>
+        <span class="result-count" id="result-count">0件</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th class="sortable" data-col="measured_at">日時<span class="sort-icon">↕</span></th>
+              <th class="sortable" data-col="download_mbps">DL (Mbps)<span class="sort-icon">↕</span></th>
+              <th class="sortable" data-col="upload_mbps">UL (Mbps)<span class="sort-icon">↕</span></th>
+              <th class="sortable" data-col="ping_ms">Ping (ms)<span class="sort-icon">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody">
+            <tr><td colspan="4" class="table-empty">データを読み込み中…</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </main>
 

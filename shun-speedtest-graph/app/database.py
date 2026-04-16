@@ -81,13 +81,25 @@ def _row_to_dict(row: sqlite3.Row) -> dict:
     }
 
 
-def get_results(hours: Optional[int] = None, limit: Optional[int] = None) -> list[dict]:
-    query = "SELECT * FROM speed_results WHERE error IS NULL"
+def get_results(
+    hours: Optional[int] = None,
+    limit: Optional[int] = None,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
+) -> list[dict]:
+    conditions = ["error IS NULL"]
     params: list = []
-    if hours is not None:
+    if from_date:
+        conditions.append("measured_at >= ?")
+        params.append(from_date + " 00:00:00")
+    elif hours is not None:
         cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
-        query += " AND measured_at >= ?"
+        conditions.append("measured_at >= ?")
         params.append(cutoff.strftime("%Y-%m-%d %H:%M:%S"))
+    if to_date:
+        conditions.append("measured_at <= ?")
+        params.append(to_date + " 23:59:59")
+    query = "SELECT * FROM speed_results WHERE " + " AND ".join(conditions)
     query += " ORDER BY measured_at ASC"
     if limit is not None:
         query += f" LIMIT {int(limit)}"
@@ -105,13 +117,29 @@ def get_latest() -> Optional[dict]:
         return _row_to_dict(row) if row else None
 
 
-def get_stats(hours: int = 24) -> dict:
-    cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+def get_stats(
+    hours: int = 24,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
+) -> dict:
+    conditions = ["error IS NULL"]
+    params: list = []
+    if from_date:
+        conditions.append("measured_at >= ?")
+        params.append(from_date + " 00:00:00")
+    else:
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        conditions.append("measured_at >= ?")
+        params.append(cutoff)
+    if to_date:
+        conditions.append("measured_at <= ?")
+        params.append(to_date + " 23:59:59")
+    where = " AND ".join(conditions)
     with get_conn() as conn:
         row = conn.execute(
-            """
+            f"""
             SELECT
               COUNT(*) AS count,
               AVG(download_mbps) AS avg_download,
@@ -124,9 +152,9 @@ def get_stats(hours: int = 24) -> dict:
               MAX(ping_ms)       AS max_ping,
               MIN(ping_ms)       AS min_ping
             FROM speed_results
-            WHERE error IS NULL AND measured_at >= ?
+            WHERE {where}
             """,
-            (cutoff,),
+            params,
         ).fetchone()
         return dict(row) if row else {}
 
