@@ -1,7 +1,6 @@
 services:
   web:
     build: .
-    image: shun-claude-code_web
     restart: on-failure
     stop_grace_period: 1m
     volumes:
