@@ -1,0 +1,52 @@
+manifestVersion: 1
+id: shun-claude-code
+category: developer-tools
+name: Claude Code
+version: "1.3.0"
+tagline: ブラウザから使える Claude Code (Python/Go/TypeScript/gh/aws対応)
+description: >-
+  Anthropic の Claude Code をコンテナ内で常時起動し、ttyd 経由でブラウザから
+  ターミナルとして操作できるようにするアプリです。tmux セッション上で claude
+  コマンドを起動しているため、ブラウザを閉じても作業中のセッションは
+  維持されます。さらに claude remote-control の自己復旧ループを別の tmux
+  セッション（claude-rc）で常時走らせているため、スマホの Claude アプリから
+  も同じセッションに接続して操作できます。Python3 / Go / TypeScript に加え、
+  GitHub CLI (gh) と AWS CLI v2 も同梱済みです。
+
+  【初回セットアップ】
+  1. アプリを開くとブラウザにターミナル（main セッション）が表示されるので、
+     `claude` を実行してログイン（claude.ai アカウントでの OAuth 対応）
+  2. `Ctrl+b` -> `s` でセッション一覧を開き、claude-rc セッションに切り替え
+  3. claude-rc セッション内で `claude remote-control` の初回確認
+     （ワークスペースの信頼確認 / Remote Control 有効化の y/n）を
+     一度だけ手動で通す
+  4. 以降は自動で再接続・再起動します（コンテナ再起動時は --continue で
+     約4時間以内なら元のセッションに復帰）
+
+  【gh / aws cliを使う場合】
+  umbrelOS 2.0 以降であれば、このアプリを開いた状態で
+  App > Settings > Environment variables から GH_TOKEN /
+  AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_DEFAULT_REGION を
+  直接入力できます（umbrelOS 1.x では入力欄が出ないため利用できません）。
+  入力後にアプリを再起動すると、コンテナ内に環境変数として反映され、
+  gh / aws コマンドがそのまま使えるようになります。
+developer: kurodo
+website: https://www.anthropic.com/claude-code
+submitter: kurodo
+submission: https://github.com/
+repo: https://github.com/anthropics/claude-code
+support: https://github.com/anthropics/claude-code/issues
+port: 7681
+gallery: []
+releaseNotes: >-
+  v1.3.0: gh / aws cli用の認証情報を umbrelOS 2.0 の
+  App > Settings > Environment variables から設定できるよう変更
+  （secrets.envファイル方式から移行）。
+  v1.2.0: GitHub CLI (gh) と AWS CLI v2 を追加。
+  v1.1.0: Python3 / Go / TypeScript を追加。claude remote-control の
+  自己復旧ループ（claude-rc セッション）を同梱し、スマホからの
+  常時アクセスに対応。
+dependencies: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""

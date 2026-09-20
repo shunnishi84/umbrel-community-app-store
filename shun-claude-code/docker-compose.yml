@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    image: shun-claude-code_web
+    restart: on-failure
+    stop_grace_period: 1m
+    volumes:
+      # ~/.claude (ログイン情報・設定) を永続化
+      - ${APP_DATA_DIR}/data/claude-home:/root/.claude
+      - ${APP_DATA_DIR}/data/claude-json:/root/.claude.json.d
+      # 作業用ディレクトリ（コードを置く場所）を永続化
+      - ${APP_DATA_DIR}/data/workspace:/workspace
+      # go get / go install したパッケージのキャッシュを永続化
+      - ${APP_DATA_DIR}/data/go-pkg:/root/go
+    environment:
+      - TZ=Asia/Tokyo
+      # gh cli 用。値は umbrelOS の App > Settings > Environment variables で設定
+      - GH_TOKEN=${GH_TOKEN}
+      # aws cli 用。同じく umbrelOS の設定画面から入力
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-ap-northeast-1}
