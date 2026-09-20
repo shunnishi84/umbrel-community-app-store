@@ -1,6 +1,13 @@
 services:
+  app_proxy:
+    environment:
+      # フォーマット: <app-id>_<docker-service-name>_1
+      APP_HOST: shun-claude-code_web_1
+      APP_PORT: 7681
+
   web:
-    build: .
+    build:
+      context: ${APP_DATA_DIR}
     restart: on-failure
     stop_grace_period: 1m
     volumes:
