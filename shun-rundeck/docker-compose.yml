@@ -19,5 +19,5 @@ services:
       - RUNDECK_DATABASE_URL=jdbc:h2:file:/home/rundeck/server/data/grailsdb
       - JAVA_OPTS=-Xmx3g -Xms1g
     volumes:
-      - ./data:/home/rundeck/server/data
+      - ${APP_DATA_DIR}/data:/home/rundeck/server/data
     restart: on-failure
